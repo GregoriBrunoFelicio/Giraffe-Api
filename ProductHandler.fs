@@ -23,5 +23,26 @@ let getById id : HttpHandler =
                 match products with
                 | head :: _ when head.id = id -> Some(head)
                 | _ -> None
+
             return! json product next ctx
+        }
+
+let add (product: Product) : HttpHandler =
+    fun (next: HttpFunc) (ctx: HttpContext) ->
+        task {
+            let newProducts = products @ [ product ]
+            return! json newProducts next ctx
+        }
+
+let remove id : HttpHandler =
+    fun (next: HttpFunc) (ctx: HttpContext) ->
+        task {
+            let products = products;
+            let rec remove (array: List<Product>, aux) =
+                match array with
+                | head :: tail when head.id = id -> tail@aux
+                | head :: tail -> remove (tail, (head::aux))
+                | [] -> aux
+
+            return! json (remove (products, [])) next ctx
         }

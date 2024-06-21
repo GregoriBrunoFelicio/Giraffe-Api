@@ -5,10 +5,11 @@ open Microsoft.Extensions.DependencyInjection
 open Giraffe
 
 let webApp =
-    choose [
-        route "/product" >=> ProductHandler.getAllProducts
-        routef "/product/%i" ProductHandler.getById
-    ]
+    choose
+        [ route "/product" >=> ProductHandler.getAllProducts
+          routef "/product/%i" ProductHandler.getById
+          routef "/product/delete/%i" ProductHandler.remove
+          ]
 
 let configureApp (app: IApplicationBuilder) = app.UseGiraffe webApp
 
