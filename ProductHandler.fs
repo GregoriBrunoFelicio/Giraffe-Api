@@ -7,11 +7,11 @@ open Models
 
 let product1 =
     [ { id = 1
-        price = 2000
+        price = 2000m
         Description = Some("sony video game")
         Name = "PS5" } ]
 
-let products = product1 @ (AutoFaker<Product>().Generate(10) |> Seq.toList)
+let mutable products = product1 @ (AutoFaker<Product>().Generate(10) |> Seq.toList)
 
 let getAllProducts: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) -> task { return! json products next ctx }
@@ -27,21 +27,21 @@ let getById id : HttpHandler =
             return! json product next ctx
         }
 
-let add (product: Product) : HttpHandler =
-    fun (next: HttpFunc) (ctx: HttpContext) ->
-        task {
-            let newProducts = products @ [ product ]
-            return! json newProducts next ctx
-        }
+let add : HttpHandler =
+    fun (next: HttpFunc) (ctx: HttpContext) -> task {
+        let! product = ctx.BindJsonAsync<Product>()
+        return! json (products @ [ product ]) next ctx
+    }
 
 let remove id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            let products = products;
+            let products = products
+
             let rec remove (array: List<Product>, aux) =
                 match array with
-                | head :: tail when head.id = id -> tail@aux
-                | head :: tail -> remove (tail, (head::aux))
+                | head :: tail when head.id = id -> tail @ aux
+                | head :: tail -> remove (tail, (head :: aux))
                 | [] -> aux
 
             return! json (remove (products, [])) next ctx
