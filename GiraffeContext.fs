@@ -15,7 +15,3 @@ type GiraffeContext(options: DbContextOptions<GiraffeContext>) =
 
     override this_.OnModelCreating(modelBuilder: ModelBuilder) =
         modelBuilder.Entity<Product>().HasKey(fun (x: Product) -> x.id :> obj) |> ignore
-        // modelBuilder.Entity<Product>().Property(fun x -> x.price).HasPrecision(18, 2)
-        // |> ignore
-
-// TODO add id as key

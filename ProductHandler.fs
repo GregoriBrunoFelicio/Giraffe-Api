@@ -21,7 +21,6 @@ let getById id : HttpHandler =
             // REFACT!!!!!
             let products =
                 ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
-
             let product =
                 match products with
                 | head :: _ when head.id = id -> Some(head)
@@ -35,8 +34,8 @@ let add: HttpHandler =
         task {
             let! product = ctx.BindJsonAsync<Product>()
             let context =  ctx.GetService<GiraffeContext>()
-            context.AddAsync(product) |> ignore
-            let! _ = context.SaveChangesAsync() |> Async.AwaitTask
+            let! _ = context.AddAsync(product)
+            let! _ = context.SaveChangesAsync()
             return! json product next ctx
         }
 
