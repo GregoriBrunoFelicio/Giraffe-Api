@@ -10,7 +10,9 @@ let webApp =
     choose
         [ route "/product" >=> ProductHandler.getAllProducts
           routef "/product/%i" ProductHandler.getById
-          routef "/product/delete/%i" ProductHandler.remove ]
+          routef "/product/delete/%i" ProductHandler.remove
+          route "/product/new" >=> POST >=> ProductHandler.add
+           ]
 
 let configureApp (app: IApplicationBuilder) = app.UseGiraffe webApp
 

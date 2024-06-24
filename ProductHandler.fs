@@ -33,9 +33,11 @@ let getById id : HttpHandler =
 let add: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            // REFACT!!!!!
             let! product = ctx.BindJsonAsync<Product>()
-            return! json None next ctx
+            let context =  ctx.GetService<GiraffeContext>()
+            context.AddAsync(product) |> ignore
+            let! _ = context.SaveChangesAsync() |> Async.AwaitTask
+            return! json product next ctx
         }
 
 let remove id : HttpHandler =
