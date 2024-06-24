@@ -1,24 +1,21 @@
 module ProductHandler
 
-open AutoBogus
+open Giraffe.Poc.Api.GiraffeContext
 open Microsoft.AspNetCore.Http
 open Giraffe
+open System.Linq
 open Models
 
-let product1 =
-    [ { id = 1
-        price = 2000m
-        Description = Some("sony video game")
-        Name = "PS5" } ]
-
-let mutable products = product1 @ (AutoFaker<Product>().Generate(10) |> Seq.toList)
-
 let getAllProducts: HttpHandler =
-    fun (next: HttpFunc) (ctx: HttpContext) -> task { return! json products next ctx }
+    fun (next: HttpFunc) (ctx: HttpContext) -> task {
+        let products = ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
+        return! json products next ctx
+    }
 
 let getById id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
+            let products = ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
             let product =
                 match products with
                 | head :: _ when head.id = id -> Some(head)
@@ -30,14 +27,13 @@ let getById id : HttpHandler =
 let add : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) -> task {
         let! product = ctx.BindJsonAsync<Product>()
-        return! json (products @ [ product ]) next ctx
+        return! json None next ctx
     }
 
 let remove id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            let products = products
-
+            let products = ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
             let rec remove (array: List<Product>, aux) =
                 match array with
                 | head :: tail when head.id = id -> tail @ aux

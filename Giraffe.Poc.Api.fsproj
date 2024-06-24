@@ -8,12 +8,21 @@
 
     <ItemGroup>
         <PackageReference Include="AutoBogus" Version="2.13.1" />
+        <PackageReference Include="EntityFrameworkCore.FSharp" Version="6.0.7" />
         <PackageReference Include="Giraffe" Version="6.0.0"/>
         <PackageReference Include="Giraffe.ViewEngine" Version="1.3.*"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.31">
+          <PrivateAssets>all</PrivateAssets>
+          <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.30" />
+        <PackageReference Include="TaskBuilder.fs" Version="2.2.0-alpha" />
     </ItemGroup>
 
     <ItemGroup>
         <Compile Include="Models.fs" />
+        <Compile Include="GiraffeContext.fs" />
+        <Compile Include="CartHanlder.fs" />
         <Compile Include="ProductHandler.fs" />
         <Compile Include="Program.fs" />
         <None Include="web.config">
