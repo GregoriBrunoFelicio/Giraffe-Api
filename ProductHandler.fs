@@ -15,7 +15,6 @@ let getAllProducts: HttpHandler =
             return! json products next ctx
         }
 
-
 let getById id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {

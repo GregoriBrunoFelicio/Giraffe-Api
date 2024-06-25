@@ -22,8 +22,8 @@
     <ItemGroup>
         <Compile Include="Models.fs" />
         <Compile Include="GiraffeContext.fs" />
-        <Compile Include="CartHanlder.fs" />
         <Compile Include="ProductHandler.fs" />
+        <Compile Include="CartHandler.fs" />
         <Compile Include="Program.fs" />
         <None Include="web.config">
           <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
@@ -31,5 +31,9 @@
         <Content Include="WebRoot\**\*">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Handlers\**" />
     </ItemGroup>
 </Project>

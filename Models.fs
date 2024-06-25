@@ -3,11 +3,16 @@ module Models
 [<CLIMutable>]
 type Product =
     { id: int
-      Name: string
-      Description: string
+      name: string
+      description: string
       price: decimal }
 
+type PaymentType =
+    | creditcard = 0
+    | cash = 1
+    
 type Cart =
-    { Products: List<Product>
-      Total: decimal
-      Discount: decimal }
+    { products: List<Product>
+      total: decimal
+      discount: decimal
+      paymentType: PaymentType }
