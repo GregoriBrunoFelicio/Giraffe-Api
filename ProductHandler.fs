@@ -15,17 +15,12 @@ let getAllProducts: HttpHandler =
             return! json products next ctx
         }
 
+
 let getById id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            // REFACT!!!!!
-            let products =
-                ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
-            let product =
-                match products with
-                | head :: _ when head.id = id -> Some(head)
-                | _ -> None
-
+            let context = ctx.GetService<GiraffeContext>()
+            let product = context.products.FirstOrDefault(fun x -> x.id = id)
             return! json product next ctx
         }
 
@@ -33,7 +28,7 @@ let add: HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
             let! product = ctx.BindJsonAsync<Product>()
-            let context =  ctx.GetService<GiraffeContext>()
+            let context = ctx.GetService<GiraffeContext>()
             let! _ = context.AddAsync(product)
             let! _ = context.SaveChangesAsync()
             return! json product next ctx
@@ -42,15 +37,10 @@ let add: HttpHandler =
 let remove id : HttpHandler =
     fun (next: HttpFunc) (ctx: HttpContext) ->
         task {
-            // REFACT
-            let products =
-                ctx.GetService<GiraffeContext>().products.ToList<Product>() |> List.ofSeq
-
-            let rec remove (array: List<Product>, aux) =
-                match array with
-                | head :: tail when head.id = id -> tail @ aux
-                | head :: tail -> remove (tail, (head :: aux))
-                | [] -> aux
-
-            return! json (remove (products, [])) next ctx
+            let context = ctx.GetService<GiraffeContext>()
+            // REfACT use existing method to get by id
+            let product = context.products.FirstOrDefault(fun f -> f.id = id)
+            context.Remove(product) |> ignore
+            let! _ = context.SaveChangesAsync()
+            return! json () next ctx
         }
